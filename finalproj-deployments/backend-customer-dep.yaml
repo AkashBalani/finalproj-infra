@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-customer
+  namespace: backend
+  labels:
+    app: backend-customer
+    group: devops
+spec:
+  # modify replicas according to your case
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-customer
+  template:
+    metadata:
+      labels:
+        app: backend-customer
+    spec:
+      containers:
+      - name: backend-customer
+        image: ashutoshshukla/finalproj-customer:v1
+        imagePullPolicy: Always
+        ports:
+          - { containerPort: 8080,  protocol: TCP }
+        env:
+          - name: MYSQL_USER
+            value: root
+          - name: MYSQL_PASSWORD
+            value: root
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: mysql-db-url
+                key: url
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "100m"
+          limits:
+            memory: "2048Mi"
+            cpu: "2"
